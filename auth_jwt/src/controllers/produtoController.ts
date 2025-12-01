@@ -182,7 +182,7 @@ export const createProduto = async (req: Request, res: Response) => {
 // LIST ALL
 export const listProdutos = async (_: Request, res: Response) => {
   try {
-    // Produtos agora são privados por usuário — extrair token e filtrar por userId
+   
     const token = _?.headers?.authorization?.slice("Bearer ".length);
     if (!token) return res.status(401).json({ error: "Token ausente" });
     try {
@@ -214,7 +214,7 @@ export const listProdutoById = async (req: Request, res: Response) => {
         message: "Produto não existe no banco de dados.",
       });
     }
-    // Somente o dono pode ver o produto
+   
     const token = req?.headers?.authorization?.slice("Bearer ".length);
     if (!token) return res.status(401).json({ error: "Token ausente" });
     try {
@@ -230,7 +230,7 @@ export const listProdutoById = async (req: Request, res: Response) => {
   }
 };
 
-// UPDATE
+// atualizar produto
 export const updateProduto = async (req: Request, res: Response) => {
   try {
     const { params, body } = req;
@@ -239,7 +239,6 @@ export const updateProduto = async (req: Request, res: Response) => {
     const token = req?.headers?.authorization?.slice("Bearer ".length);
     const payload = verifyAccess(token || "");
 
-    // VALIDAR COLUNAS PERMITIDAS
     for (const key of bodyKeys) {
       if (
         key !== produtoColumns.PRECO &&
@@ -257,7 +256,7 @@ export const updateProduto = async (req: Request, res: Response) => {
       }
     }
 
-    // CHECAR SE PERTENCE AO USUÁRIO
+    // CHECAR Se o produto pertence ao usuário
     const produtoToUpdated = await prismaClient.produto.findUnique({
       where: {
         id: Number(params.id),

@@ -6,8 +6,8 @@ services:
     container_name: mysql_prod
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: sa_fase4
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "sa_fase4"
     ports:
       - "3306:3306"
     volumes:
@@ -21,9 +21,9 @@ services:
     container_name: backend_bmw
     restart: always
     environment:
-      DATABASE_URL: mysql://root:root@db:3306/sa_fase4
-      ACCESS_TOKEN_SECRET: suaChaveSecretaAqui
-      REFRESH_TOKEN_SECRET: suaOutraChaveAqui
+      DATABASE_URL: "mysql://root:root@db:3306/sa_fase4"
+      ACCESS_TOKEN_SECRET: "chave_backend"
+      REFRESH_TOKEN_SECRET: "chave_refresh"
     ports:
       - "3000:3000"
     depends_on:
@@ -32,15 +32,255 @@ services:
   frontend:
     build:
       context: ./front
-      dockerfile: Dockerfile
     container_name: frontend_bmw
     restart: always
     ports:
-      - "5173:5173"
+      - "5173:5173"   
     environment:
-      VITE_API_URL: "http://backend:3000"
+      VITE_API_URL: "http://98.93.178.127:3000"
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     depends_on:
       - backend
 
 volumes:
   mysql_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# version: "3.9"
+
+# services:
+#   db:
+#     image: mysql:8
+#     container_name: mysql_prod
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: sa_fase4
+#     ports:
+#       - "3306:3306"
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+#     command: --default-authentication-plugin=mysql_native_password
+
+#   backend:
+#     build:
+#       context: ./auth_jwt
+#       dockerfile: Dockerfile
+#     container_name: backend_bmw
+#     restart: always
+#     environment:
+#       DATABASE_URL: mysql://root:*Ols2024@db:3306/sa_fase4
+#       ACCESS_TOKEN_SECRET: suaChaveSecretaAqui
+#       REFRESH_TOKEN_SECRET: suaOutraChaveAqui
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - db
+
+#   frontend:
+#     build:
+#       context: ./front
+#       dockerfile: Dockerfile
+#     container_name: frontend_bmw
+#     restart: always
+#     ports:
+#       - "5173:5173"
+#     environment:
+#       VITE_API_URL: "http://backend:3000"
+#     depends_on:
+#       - backend
+
+# volumes:
+#   mysql_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
