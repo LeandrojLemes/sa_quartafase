@@ -175,6 +175,76 @@ Realizar testes de produção
 
 👨‍💻 12. Autor
 
+
+
+
+
+
 Leandro Junges Lemes
 Dev  • IoT • Indústria 4.0
 GitHub: https://github.com/LeandrojLemes
+
+
+# 📘 8. Manual do Usuário
+🔐 Login
+
+Acesse: http://IP-DA-EC2
+
+Entre com seu usuário ou cadastre-se.
+
+🏍 Criar Produto
+
+Preencha modelo, cor, ano, motor, câmbio, bloco.
+
+Clique Criar Produto.
+
+📤 Enviar para Produção
+
+Na tabela de produtos → clique em Enviar para Produção.
+
+🏭 Acompanhar Status
+
+A tabela de pedidos atualiza automaticamente a cada 3 segundos.
+
+# 🛠 9. Manutenção + Boas Práticas
+Exemplos:
+
+Atualizar container:
+
+docker compose down
+git pull
+docker compose up -d --build
+
+
+Corrigir erro de conexão → verificar:
+
+.env
+
+porta 3000 liberada
+
+logs do container:
+
+docker logs backend
+
+# 📄 10. Relatório – Tecnologias utilizadas
+Tecnologia	Função
+Node.js + Express	API REST segura
+Prisma ORM	Acesso ao banco
+MySQL/Postgres	Banco de dados
+React + Vite	Frontend
+Axios	Requisições
+Docker	Deploy e isolamento
+AWS EC2	Hospedagem
+JWT	Autenticação segura
+Nginx	Servidor do frontend
+IoT HTTP	Comunicação com a bancada
+# 🏁 11. Conclusão
+
+O projeto implementa 100% dos requisitos do Desafio Indústria 4.0, entregando:
+
+✔ Sistema completo (front + back + IoT)
+✔ Deploy funcional na AWS
+✔ Automação da produção
+✔ Comunicação em tempo real
+✔ Documentação técnica + manual
+✔ Arquitetura moderna usando Docker
