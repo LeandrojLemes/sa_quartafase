@@ -182,8 +182,16 @@ export const createProduto = async (req: Request, res: Response) => {
 // LIST ALL
 export const listProdutos = async (_: Request, res: Response) => {
   try {
-    const produtos = await prismaClient.produto.findMany();
-    res.json(produtos);
+    // Produtos agora são privados por usuário — extrair token e filtrar por userId
+    const token = _?.headers?.authorization?.slice("Bearer ".length);
+    if (!token) return res.status(401).json({ error: "Token ausente" });
+    try {
+      const payload = verifyAccess(token || "");
+      const produtos = await prismaClient.produto.findMany({ where: { userId: (payload as any).userId } });
+      return res.json(produtos);
+    } catch (e) {
+      return res.status(401).json({ error: "Token inválido" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send(`Erro no servidor: ${error}`);
@@ -206,8 +214,16 @@ export const listProdutoById = async (req: Request, res: Response) => {
         message: "Produto não existe no banco de dados.",
       });
     }
-
-    return res.json(produto);
+    // Somente o dono pode ver o produto
+    const token = req?.headers?.authorization?.slice("Bearer ".length);
+    if (!token) return res.status(401).json({ error: "Token ausente" });
+    try {
+      const payload = verifyAccess(token || "");
+      if ((payload as any).userId !== produto.userId) return res.status(403).json({ error: "Acesso negado" });
+      return res.json(produto);
+    } catch (e) {
+      return res.status(401).json({ error: "Token inválido" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send(`Erro no servidor: ${error}`);

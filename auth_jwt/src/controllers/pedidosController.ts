@@ -89,6 +89,21 @@ export const listPedidoById = async (req: Request, res: Response) => {
       });
     }
 
+    // Se houver token no header, garantir que o pedido pertence ao usuário
+    try {
+      const token = req?.headers?.authorization?.slice("Bearer ".length);
+      if (token) {
+        const payload = verifyAccess(token || "");
+        // se não for dono, negar
+        if ((payload as any).userId !== pedido.userId) {
+          return res.status(403).json({ error: "Acesso negado ao pedido" });
+        }
+      }
+    } catch (e) {
+      // token inválido → negar acesso quando houver header inválido
+      if (req.headers.authorization) return res.status(401).json({ error: "token inválido" });
+    }
+
     return res.json(pedido);
   } catch (error) {
     console.log(error);
@@ -110,6 +125,17 @@ export const updatePedido = async (req: Request, res: Response) => {
       )
         return res.status(404).send("Colunas não existentes");
     }
+    // Verificar propriedade do pedido
+    const existing = await prismaClient.pedido.findUnique({ where: { id: Number(params.id) } });
+    if (!existing) return res.status(404).send("Pedido não encontrado!");
+    try {
+      const token = req?.headers?.authorization?.slice("Bearer ".length);
+      const payload = verifyAccess(token || "");
+      if ((payload as any).userId !== existing.userId) return res.status(403).send("Acesso negado");
+    } catch (e) {
+      return res.status(401).send("Token inválido");
+    }
+
     const pedido = await prismaClient.pedido.update({
       where: { id: Number(params.id) },
       data: {
@@ -132,11 +158,17 @@ export const updatePedido = async (req: Request, res: Response) => {
 export const deletePedido = async (req: Request, res: Response) => {
   try {
     const { params } = req;
-    await prismaClient.pedido.delete({
-      where: {
-        id: Number(params.id),
-      },
-    });
+    const existing = await prismaClient.pedido.findUnique({ where: { id: Number(params.id) } });
+    if (!existing) return res.status(404).send("Pedido não encontrado!");
+    try {
+      const token = req?.headers?.authorization?.slice("Bearer ".length);
+      const payload = verifyAccess(token || "");
+      if ((payload as any).userId !== existing.userId) return res.status(403).send("Acesso negado");
+    } catch (e) {
+      return res.status(401).send("Token inválido");
+    }
+
+    await prismaClient.pedido.delete({ where: { id: Number(params.id) } });
     res.status(200).send("Pedido deletado com sucesso!");
   } catch (error) {
     if ((error as PrismaClientKnownRequestError).code == "P2025") {
@@ -150,6 +182,19 @@ export const deletePedido = async (req: Request, res: Response) => {
 export const updateStatus = async (req: Request, res: Response) => {
   const { params, query } = req;
   try {
+    // Se a chamada incluir um token (chamada do front), validar propriedade
+    if (req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.slice("Bearer ".length);
+        const payload = verifyAccess(token || "");
+        const existing = await prismaClient.pedido.findUnique({ where: { id: Number(params.id) } });
+        if (!existing) return res.status(404).send("Pedido não encontrado!");
+        if ((payload as any).userId !== existing.userId) return res.status(403).send("Acesso negado");
+      } catch (e) {
+        return res.status(401).send("Token inválido");
+      }
+    }
+
     const pedidoUpdate = await prismaClient.pedido.update({
       where: { id: Number(params.id) },
       data: {

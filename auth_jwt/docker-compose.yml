@@ -1,38 +1,46 @@
+version: "3.9"
+
 services:
   db:
-    image: mysql:8.0
-    container_name: auth_jwt_db
+    image: mysql:8
+    container_name: mysql_prod
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: authdb
+      MYSQL_DATABASE: sa_fase4
     ports:
       - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
     volumes:
       - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
 
-  app:
+  backend:
     build:
-      context: .
+      context: ./auth_jwt
       dockerfile: Dockerfile
-      target: dev
-    container_name: auth_jwt_app
+    container_name: backend_bmw
     restart: always
-    command: npm run dev
+    environment:
+      DATABASE_URL: mysql://root:root@db:3306/sa_fase4
+      ACCESS_TOKEN_SECRET: suaChaveSecretaAqui
+      REFRESH_TOKEN_SECRET: suaOutraChaveAqui
     ports:
       - "3000:3000"
-    environment:
-      DATABASE_URL: mysql://root:*Ols2024@db:3306/authdb
-      NODE_ENV: development
-      ACCESS_TOKEN_SECRET: "chaveSuperSecreta123"
-      REFRESH_TOKEN_SECRET: "chaveMuitoMuitoSecreta456"
-
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     depends_on:
       - db
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: frontend_bmw
+    restart: always
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://backend:3000"
+    depends_on:
+      - backend
 
 volumes:
   mysql_data:
