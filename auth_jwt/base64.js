@@ -1,5 +1,6 @@
 
-const meutexto = "alexcoxinha123pastel321"
+const meutexto = "leandro_teste_base64";
 const meubase64 = btoa(meutexto);
-console.log(meubase64)
-console.log(atob(meubase64))
+
+console.log("Base64:", meubase64);
+console.log("Decodificado:", atob(meubase64));

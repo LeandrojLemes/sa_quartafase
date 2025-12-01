@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: mysql://root:root@db:3306/authdb
+      DATABASE_URL: mysql://root:*Ols2024@db:3306/authdb
       NODE_ENV: development
       ACCESS_TOKEN_SECRET: "chaveSuperSecreta123"
       REFRESH_TOKEN_SECRET: "chaveMuitoMuitoSecreta456"
