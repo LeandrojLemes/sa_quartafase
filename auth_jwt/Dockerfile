@@ -1,12 +1,38 @@
-FROM node:20-alpine AS base
-WORKDIR /usr/src/app
-COPY package*.json ./
+# ============================
+#  STAGE 1 — DEPENDÊNCIAS
+# ============================
+FROM node:18 AS deps
 
-FROM base AS dev
+WORKDIR /app
+
+COPY package*.json ./
 RUN npm install
-COPY tsconfig.json ./
-COPY prisma ./prisma
-COPY src ./src
+
+# ============================
+#  STAGE 2 — BUILD
+# ============================
+FROM node:18 AS build
+
+WORKDIR /app
+
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+
+RUN npx prisma generate
+RUN npm run build
+
+# ============================
+#  STAGE 3 — PRODUÇÃO
+# ============================
+FROM node:18 AS prod
+
+WORKDIR /app
+
+COPY --from=build /app ./
+
+ENV NODE_ENV=production
+ENV PORT=3000
 
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+
+CMD ["node", "dist/app.js"]
